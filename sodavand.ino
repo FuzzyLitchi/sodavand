@@ -14,7 +14,7 @@ class Interface {
 
   public: void test_leds() {
     Serial.println("Testing leds");
-  
+
     for (unsigned int a = 0; a < LENGTH; a += 1) {
       digitalWrite(leds[(a-1+LENGTH)%LENGTH], LOW);
       digitalWrite(leds[a], HIGH);
@@ -25,9 +25,9 @@ class Interface {
 
   public: void led_update() {
     for (unsigned int a = 0; a < LENGTH; a += 1) {
-      digitalWrite(leds[led_selected], LOW);
+      digitalWrite(leds[a], LOW);
     }
-    
+
     if (led_on) {
       digitalWrite(leds[led_selected], HIGH);
     }
@@ -51,7 +51,6 @@ class Interface {
         //If you're pressing an led that is off
         if (!led_on || led_selected!=a) {
           led_on = true;
-          digitalWrite(leds[led_selected], LOW);
           led_selected = a;
           Serial.print("LED ");
           Serial.print(led_selected);
@@ -75,11 +74,11 @@ Interface::Interface(int buttons_new[5], int leds_new[5]) {
   if (sizeof(buttons)/sizeof(buttons[0]) != LENGTH) {
     Serial.println("Wrong number of buttons");
   }
-  
+
   if (sizeof(leds)/sizeof(leds[0]) != LENGTH) {
     Serial.println("Wrong number of buttons");
   }
-  
+
   memcpy(buttons, buttons_new, LENGTH*sizeof(buttons[0]));
   memcpy(leds, leds_new, LENGTH*sizeof(leds[0]));
 
@@ -104,4 +103,3 @@ void loop() {
   //Turn leds on and off according to the variables
   interface.led_update();
 }
-
