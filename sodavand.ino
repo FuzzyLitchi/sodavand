@@ -1,6 +1,9 @@
+#include <SoftwareSerial.h>
 const int buttons[] = {9, 10, 11, 12, 13};
 const int leds[] = {2, 3, 4, 5, 6};
 #define LENGTH 5
+
+SoftwareSerial LCDSerial(7, 8); //RX TX
 
 class Interface {
     int buttons[LENGTH];
@@ -23,6 +26,12 @@ class Interface {
         digitalWrite(leds[LENGTH-1], LOW);
     };
 
+    //32 character long
+    public: void lcd_send(String string) {
+        LCDSerial.print(string);
+        LCDSerial.write("\xff");
+    }
+
     public: void led_update() {
         for (unsigned int a = 0; a < LENGTH; a += 1) {
             digitalWrite(leds[a], LOW);
@@ -36,6 +45,8 @@ class Interface {
         Serial.print("	");
         Serial.print("led_on: ");
         Serial.println(led_on);
+
+        lcd_send("hahaja\nthinking");
     };
 
     public: void update() {
@@ -62,6 +73,9 @@ class Interface {
                     Serial.print(a);
                     Serial.println(" turned off");
                 }
+
+                //Turn leds on and off according to the variables
+                led_update();
             }
         }
 
@@ -92,7 +106,11 @@ Interface::Interface(int buttons_new[5], int leds_new[5]) {
 Interface interface(buttons, leds);
 
 void setup() {
+    //Debug serial connection
     Serial.begin(9600);
+
+    //Serial connection for communicating with the LCD arduino
+    LCDSerial.begin(9600);
 
     //Run through the leds, to check wether they all work
     interface.test_leds();
@@ -100,6 +118,4 @@ void setup() {
 
 void loop() {
     interface.update();
-    //Turn leds on and off according to the variables
-    interface.led_update();
 }
