@@ -5,7 +5,7 @@ SoftwareSerial LCDSerial(2, 3); // RX, TX
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
 void setup() {
-    // Open serial communications and wait for port to open:
+    //Open serial communications and wait for port to open:
     Serial.begin(9600);
     while (!Serial) {
         ;
@@ -35,7 +35,7 @@ void loop() {
             lcd.print(buff);
             Serial.print("Printed string: ");
             Serial.println(buff);
-            buff = ""
+            buff = "";
 
         } else if (b == -1) {
             Serial.println("Got -1, wtf");
