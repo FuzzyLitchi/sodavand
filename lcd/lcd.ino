@@ -29,10 +29,11 @@ String buff = "";
 void loop() {
     while (LCDSerial.available()) {
         int b = LCDSerial.read();
+        Serial.println(b);
 
-        if(b == 0xff) {
+        if(b == 0x00) {
             lcd.clear();
-            lcd.print(buff);
+            print_lcd(buff);
             Serial.print("Printed string: ");
             Serial.println(buff);
             buff = "";
@@ -41,6 +42,17 @@ void loop() {
             Serial.println("Got -1, wtf");
         } else {
             buff += (char)b;
+        }
+    }
+}
+
+void print_lcd(String buff) {
+    unsigned int len = buff.length();
+    for (unsigned int i = 0; i < len; i++) {
+        if (buff[i] == '\n' || buff[i] == '\r') {
+            lcd.setCursor(0, 1);
+        } else {
+            lcd.write(buff[i]);
         }
     }
 }
