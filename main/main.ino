@@ -1,9 +1,10 @@
 #include <SoftwareSerial.h>
-const int buttons[] = {9, 10, 11, 12, 13};
-const int leds[] = {2, 3, 4, 5, 6};
+int buttons[] = {9, 10, 11, 12, 13};
+int leds[] = {2, 3, 4, 5, 6};
 #define LENGTH 5
 
 SoftwareSerial LCDSerial(7, 8); //RX TX
+//Connect 7 <-> 3 og 8 <-> 2
 
 class Interface {
     int buttons[LENGTH];
@@ -29,7 +30,7 @@ class Interface {
     //32 character long
     public: void lcd_send(String string) {
         LCDSerial.print(string);
-        LCDSerial.write("\xff");
+        LCDSerial.write("\x00");
     }
 
     public: void led_update() {
