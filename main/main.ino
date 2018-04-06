@@ -1,6 +1,19 @@
 #include <SoftwareSerial.h>
 int buttons[] = {9, 10, 11, 12, 13};
-int leds[] = {2, 3, 4, 5, 6};
+
+class LED {
+    public:
+        int pin;
+        String name;
+        int price;
+
+        LED(int pin_new, String name_new, int price_new) {
+            pin = pin_new;
+            name = name_new;
+            price = price_new;
+        }
+};
+
 #define LENGTH 5
 
 SoftwareSerial LCDSerial(7, 8); //RX TX
@@ -8,46 +21,70 @@ SoftwareSerial LCDSerial(7, 8); //RX TX
 
 class Interface {
     int buttons[LENGTH];
-    int leds[LENGTH];
+    LED leds[5] = {
+        LED(2, "Juice", 10),
+        LED(3, "Cola", 10),
+        LED(4, "Smølfe pis", 10),
+        LED(5, "Faxe Kondi", 10),
+        LED(6, "Whitness", 10)
+    };
 
     bool button_state[LENGTH];
     bool led_on = false;
     int led_selected = 1;
 
-    public: Interface (int[], int[]);
+    public: Interface(int buttons_new[5]) {
+        //Sanity check for wether we have the same amount of buttons and leds
+        if (sizeof(buttons)/sizeof(buttons[0]) != LENGTH) {
+            Serial.println("Wrong number of buttons");
+        }
+
+        if (sizeof(leds)/sizeof(leds[0]) != LENGTH) {
+            Serial.println("Wrong number of LEDs");
+        }
+
+        memcpy(buttons, buttons_new, LENGTH*sizeof(buttons[0]));
+
+        //Make all the buttons and leds ready
+        for (unsigned int a = 0; a < LENGTH; a += 1) {
+            pinMode(buttons[a], INPUT);
+            pinMode(leds[a].pin, OUTPUT);
+        }
+    };
 
     public: void test_leds() {
         Serial.println("Testing leds");
 
         for (unsigned int a = 0; a < LENGTH; a += 1) {
-            digitalWrite(leds[(a-1+LENGTH)%LENGTH], LOW);
-            digitalWrite(leds[a], HIGH);
+            digitalWrite(leds[(a-1+LENGTH)%LENGTH].pin, LOW);
+            digitalWrite(leds[a].pin, HIGH);
             delay(100);
         }
-        digitalWrite(leds[LENGTH-1], LOW);
+        digitalWrite(leds[LENGTH-1].pin, LOW);
     };
 
     //32 character long
     public: void lcd_send(String string) {
-        LCDSerial.print(string);
-        LCDSerial.write("\x00");
+        char buff[16];
+        string.toCharArray(buff, 16);
+        LCDSerial.write(buff);
+        LCDSerial.write("\x00"); //FIX THIS
     }
 
     public: void led_update() {
         for (unsigned int a = 0; a < LENGTH; a += 1) {
-            digitalWrite(leds[a], LOW);
+            digitalWrite(leds[a].pin, LOW);
         }
 
         if (led_on) {
-            digitalWrite(leds[led_selected], HIGH);
+            digitalWrite(leds[led_selected].pin, HIGH);
+            lcd_send("Test");
         }
         Serial.print("led_selected: ");
         Serial.print(led_selected);
         Serial.print("	");
         Serial.print("led_on: ");
         Serial.println(led_on);
-
-        lcd_send("hahaja\nthinking");
     };
 
     public: void update() {
@@ -84,27 +121,7 @@ class Interface {
     };
 };
 
-Interface::Interface(int buttons_new[5], int leds_new[5]) {
-    //Sanity check for wether we have the same amount of buttons and leds
-    if (sizeof(buttons)/sizeof(buttons[0]) != LENGTH) {
-        Serial.println("Wrong number of buttons");
-    }
-
-    if (sizeof(leds)/sizeof(leds[0]) != LENGTH) {
-        Serial.println("Wrong number of buttons");
-    }
-
-    memcpy(buttons, buttons_new, LENGTH*sizeof(buttons[0]));
-    memcpy(leds, leds_new, LENGTH*sizeof(leds[0]));
-
-    //Make all the buttons and leds ready
-    for (unsigned int a = 0; a < LENGTH; a += 1) {
-        pinMode(buttons[a], INPUT);
-        pinMode(leds[a], OUTPUT);
-    }
-}
-
-Interface interface(buttons, leds);
+Interface interface(buttons);
 
 void setup() {
     //Debug serial connection
