@@ -66,9 +66,12 @@ class Interface {
     //32 character long
     public: void lcd_send(String string) {
         char buff[16];
+        LCDSerial.write("\xbb");
         string.toCharArray(buff, 16);
         LCDSerial.write(buff);
-        LCDSerial.write("\x00"); //FIX THIS
+
+        Serial.print("LCD string: ");
+        Serial.println(string);
     }
 
     public: void led_update() {
@@ -78,13 +81,14 @@ class Interface {
 
         if (led_on) {
             digitalWrite(leds[led_selected].pin, HIGH);
-            lcd_send("Test");
+            lcd_send(leds[led_selected].name);
         }
+        /*
         Serial.print("led_selected: ");
         Serial.print(led_selected);
         Serial.print("	");
         Serial.print("led_on: ");
-        Serial.println(led_on);
+        Serial.println(led_on);*/
     };
 
     public: void update() {

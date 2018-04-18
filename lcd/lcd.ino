@@ -17,6 +17,19 @@ void setup() {
         ;
     }
 
+    //Add ø to the thingi (Doesn't work rn)
+    byte oe[8] = {
+        B00000,
+        B00000,
+        B01110,
+        B10011,
+        B10101,
+        B11001,
+        B01110,
+    };
+    lcd.createChar(0x00, oe);
+    //Stuff from here on out works (Probably)
+
     Serial.println("Up and running");
 
     // set up the LCD's number of columns and rows:
@@ -31,17 +44,12 @@ void loop() {
         int b = LCDSerial.read();
         Serial.println(b);
 
-        if(b == 0x00) {
+        if(b == 0xbb) {
             lcd.clear();
-            print_lcd(buff);
-            Serial.print("Printed string: ");
-            Serial.println(buff);
-            buff = "";
-
-        } else if (b == -1) {
+        } else if (b == -1 || b == 0xff) {
             Serial.println("Got -1, wtf");
         } else {
-            buff += (char)b;
+            lcd.write(b);
         }
     }
 }
