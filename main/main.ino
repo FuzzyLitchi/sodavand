@@ -24,7 +24,7 @@ class Interface {
     LED leds[5] = {
         LED(2, "Juice", 10),
         LED(3, "Cola", 10),
-        LED(4, "Smølfe pis", 10),
+        LED(4, "Smoelfe pis", 10),
         LED(5, "Faxe Kondi", 10),
         LED(6, "Whitness", 10)
     };
@@ -114,6 +114,8 @@ class Interface {
                     Serial.print("LED ");
                     Serial.print(a);
                     Serial.println(" turned off");
+                    //Make the screen blank
+                    lcd_send("");
                 }
 
                 //Turn leds on and off according to the variables
