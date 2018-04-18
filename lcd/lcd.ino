@@ -48,19 +48,10 @@ void loop() {
             lcd.clear();
         } else if (b == -1 || b == 0xff) {
             Serial.println("Got -1, wtf");
-        } else {
-            lcd.write(b);
-        }
-    }
-}
-
-void print_lcd(String buff) {
-    unsigned int len = buff.length();
-    for (unsigned int i = 0; i < len; i++) {
-        if (buff[i] == '\n' || buff[i] == '\r') {
+        } else if (b == '\n' || b == '\r') {
             lcd.setCursor(0, 1);
         } else {
-            lcd.write(buff[i]);
+            lcd.write(b);
         }
     }
 }
