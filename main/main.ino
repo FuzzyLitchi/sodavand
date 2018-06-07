@@ -83,12 +83,6 @@ class Interface {
             digitalWrite(leds[led_selected].pin, HIGH);
             lcd_send(leds[led_selected].name);
         }
-        /*
-        Serial.print("led_selected: ");
-        Serial.print(led_selected);
-        Serial.print("	");
-        Serial.print("led_on: ");
-        Serial.println(led_on);*/
     };
 
     public: void update() {
